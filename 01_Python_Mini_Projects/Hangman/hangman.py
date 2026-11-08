@@ -1,24 +1,77 @@
 #Imports the random module
 import random
-
-
+print(           """
+       +---+
+       |   |
+           |
+           |
+           |
+          ===
+    """)
 while True:
     #No of Lives
     lives=6
 
     #Open File and put the words into array
-    file=open("words.txt","r")
-    words=file.read().splitlines()
-    secret_word=random.choice(words).upper()
+    with open("words.txt","r") as file:
+        words=[word.strip() for word in file if word.strip()]
+        secret_word=random.choice(words).upper()
 
     #Hidden word with Underscores
-    hidden_word=["_ "]*len(secret_word)
-    print(secret_word)
+    hidden_word=["_"]*len(secret_word)
     # Guess letters array as a set to store unique values
     guessed_letters = set()
 
     #stages
-    stages=["Stage 1","Stage 2","Stage 3","Stage 4","Stage 5","Stage 6"]
+    stages=["",
+    """
+       +---+
+       |    |
+       O    |
+      /|\\  |
+      /     |
+          ===
+    """,
+            """
+       +---+
+       |    |
+       O    |
+      /|\\  |
+            |
+          ===
+    """,
+            """
+       +---+
+       |   |
+       O   |
+      /|   |
+           |
+          ===
+    """,
+            """
+       +---+
+       |   |
+       O   |
+       |   |
+           |
+          ===
+    """,
+            """
+       +---+
+       |   |
+       O   |
+           |
+           |
+          ===
+    """,
+            """
+       +---+
+       |   |
+           |
+           |
+           |
+          ===
+    """]
 
     #While loop to iterate
     while lives>0:
@@ -44,21 +97,30 @@ while True:
                 print("Wrong Guess!")
                 lives-=1
 
+        print(stages[lives])
+
         #for loop to reveal hidden word letter by letter
         for index,letter in enumerate(secret_word):
             if letter == guess:
                 hidden_word[index]=letter
-        print(hidden_word)
+        print(" ".join(hidden_word))
 
         if lives==0:
+            print("""
+       +----+ 
+       |    |
+       O    |
+      /|\\  |
+      / \\  |
+          ===
+    """)
             print("You lose!")
             print("The word was: "+secret_word)
-
-        print(stages[6-lives])
 
 
         if hidden_word==list(secret_word):
             print("Congratulations! You guessed the word!")
+            break
 
 
     #Play again
