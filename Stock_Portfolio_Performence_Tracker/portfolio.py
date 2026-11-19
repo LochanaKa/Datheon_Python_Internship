@@ -1,34 +1,60 @@
-# print(portfolio[0]["stock"])
-# total_investment=0
-# for stock in portfolio:
-#     investment=stock["quantity"]*stock["Buying_price"]
-#     total_investment=total_investment+investment
-# print("Total Investment: ",total_investment)
-
 print("===================STOCK PORTFOLIO TRACKER====================")
 
 portfolio = []
-total_investment = 0
 
 while True:
-    print("1. Add Stock ")
+
+    print("\n1. Add Stock ")
     print("2. View Portfolio ")
     print("3. Calculate Total Investment")
     print("4. Exit ")
 
     choice = input("Select an option: ")
-    if choice=="1":
-        print("You Selected Add Stock")
-        while True:
-            symbol = input("Enter the Stock Ticker: ")
-            quantity = int(input("Enter the Quantity: "))
-            buy_price = float(input("Enter the Buying Price: "))
 
-            stock = {"stock": symbol, "quantity": quantity, "Buying_price": buy_price}
+    #Option 1 : ADD STOCK
+    if choice=="1":
+        print("\nYou Selected Add Stock")
+
+        while True:
+
+            #Validate stock symbol
+            while True:
+                symbol = input("Enter the Stock Ticker: ").strip().upper()
+                if symbol=="":
+                    print("Ticker cannot be empty!")
+                else:
+                    break
+
+            #Validate Quantity
+            while True:
+                try:
+                    quantity = int(input("Enter the Quantity: "))
+                    if quantity<=0:
+                        print("Quantity must be positive!")
+                        continue
+                    break
+                except ValueError:
+                    print("Enter a Valid Whole Number!")
+
+            #Validate Buying Price
+            while True:
+                try:
+                    buy_price = float(input("Enter the Buying Price: "))
+                    if buy_price<=0:
+                        print("Price must be Positive!")
+                        continue
+                    break
+                except ValueError:
+                    print("Enter a Valid Price!")
+
+            stock = {"stock": symbol,
+                     "quantity": quantity,
+                     "Buying_price": buy_price}
             portfolio.append(stock)
 
             print("\nStock added Successfully!")
-            end = input("\nAre there any stocks to add? (Y/N)").lower()
+
+            end = input("\nAre there any stocks to add? (Y/N)").lower().strip()
             if end == "y":
                 continue
             else:
@@ -38,23 +64,36 @@ while True:
                 else:
                     continue
 
+    #OPTION 02 - VIEW PORTFOLIO
     elif choice=="2":
-        print("You Selected View Portfolio")
+
         print("\n=====================YOUR PORTFOLIO=======================")
-        for stock in portfolio:
-            print(f"{stock['stock']} | {stock['quantity']} Shares | Rs.{stock['Buying_price']}")
 
-        back_to_main = input("\nGo back to Main Menu (Y/N): ").lower()
-        if back_to_main == "y":
-            break
+        if len(portfolio) ==0:
+            print("Portfolio is empty!")
         else:
-            continue
+            for stock in portfolio:
+                print(
+                    f"{stock['stock']} | "
+                    f"{stock['quantity']} Shares | "
+                    f"Rs.{stock['Buying_price']:.2f}"
+                )
 
+            back_to_main = input("\nGo back to Main Menu (Press Any Key): ").lower()
+            if back_to_main == "y":
+                continue
+            else:
+                continue
+
+    #OPTION 3 - CALCULATE TOTAL INVESTMENT
     elif choice=="3":
+
+        total_investment = 0
+
         for stock in portfolio:
             investment = stock["quantity"] * stock["Buying_price"]
             total_investment += investment
-
+        print(f"\nTotal Investment: Rs.{total_investment:.2f}")
 
         back_to_main = input("\nGo back to Main Menu (Press Any Key): ").lower()
         if back_to_main == "y":
@@ -62,6 +101,7 @@ while True:
         else:
             continue
 
+    #OPTION 4 - Exit
     elif choice=="4":
         print("thank you for using application!")
         break
