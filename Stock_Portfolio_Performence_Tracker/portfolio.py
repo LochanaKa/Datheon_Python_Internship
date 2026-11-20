@@ -1,18 +1,10 @@
+
+
 print("===================STOCK PORTFOLIO TRACKER====================")
 
 portfolio = []
 
-while True:
-
-    print("\n1. Add Stock ")
-    print("2. View Portfolio ")
-    print("3. Calculate Total Investment")
-    print("4. Exit ")
-
-    choice = input("Select an option: ")
-
-    #Option 1 : ADD STOCK
-    if choice=="1":
+def add_stock(portfolio):
         print("\nYou Selected Add Stock")
 
         while True:
@@ -58,48 +50,53 @@ while True:
             if end == "y":
                 continue
             else:
-                back_to_main=input("\nGo back to Main Menu (Y/N): ").lower()
+                back_to_main=input("\nGo back to Main Menu (Y/N): ").lower().strip()
                 if back_to_main=="y":
                     break
                 else:
                     continue
 
+def view_portfolio(portfolio):
+    print("\n=====================YOUR PORTFOLIO=======================")
+
+    if len(portfolio) == 0:
+        print("Portfolio is empty!")
+    else:
+        for stock in portfolio:
+            print(
+                f"{stock['stock']} | "
+                f"{stock['quantity']} Shares | "
+                f"Rs.{stock['Buying_price']:.2f}"
+            )
+
+def calculate_investment(portfolio):
+    total_investment = 0
+
+    for stock in portfolio:
+        investment = stock["quantity"] * stock["Buying_price"]
+        total_investment += investment
+    print(f"\nTotal Investment: Rs.{total_investment:.2f}")
+
+while True:
+
+    print("\n1. Add Stock ")
+    print("2. View Portfolio ")
+    print("3. Calculate Total Investment")
+    print("4. Exit ")
+
+    choice = input("Select an option: ")
+
+    #Option 1 : ADD STOCK
+    if choice=="1":
+        add_stock(portfolio)
+
     #OPTION 02 - VIEW PORTFOLIO
     elif choice=="2":
-
-        print("\n=====================YOUR PORTFOLIO=======================")
-
-        if len(portfolio) ==0:
-            print("Portfolio is empty!")
-        else:
-            for stock in portfolio:
-                print(
-                    f"{stock['stock']} | "
-                    f"{stock['quantity']} Shares | "
-                    f"Rs.{stock['Buying_price']:.2f}"
-                )
-
-            back_to_main = input("\nGo back to Main Menu (Press Any Key): ").lower()
-            if back_to_main == "y":
-                continue
-            else:
-                continue
+        view_portfolio(portfolio)
 
     #OPTION 3 - CALCULATE TOTAL INVESTMENT
     elif choice=="3":
-
-        total_investment = 0
-
-        for stock in portfolio:
-            investment = stock["quantity"] * stock["Buying_price"]
-            total_investment += investment
-        print(f"\nTotal Investment: Rs.{total_investment:.2f}")
-
-        back_to_main = input("\nGo back to Main Menu (Press Any Key): ").lower()
-        if back_to_main == "y":
-            continue
-        else:
-            continue
+        calculate_investment(portfolio)
 
     #OPTION 4 - Exit
     elif choice=="4":
