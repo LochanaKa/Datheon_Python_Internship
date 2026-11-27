@@ -106,8 +106,6 @@ def move_files():
     print("FILE ORGANIZATION SUMMARY")
     print("=" * 40)
     print("Successfully moved:", moved)
-    print("Skipped:", skipped)
-    print("Total:", moved + skipped)
     print("=" * 40)
 
 
