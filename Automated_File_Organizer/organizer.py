@@ -1,11 +1,10 @@
 
 import os
+import shutil
 from pathlib import Path
 
-# Define source directory
 SOURCE_FOLDER = "test_files"
 
-# Extension and category mapping
 FILE_TYPES = {
     ".pdf": "Documents",
     ".doc": "Documents",
@@ -41,40 +40,56 @@ FILE_TYPES = {
 }
 
 
-def inspect_files():
-
-    print("Scanning directory...")
-    print("-" * 40)
-
-    with os.scandir(SOURCE_FOLDER) as files:
-
-        for file in files:
-
-            if file.is_file():
-
-                file_path = Path(file.name)
-
-                extension = file_path.suffix.lower()
-
-                print("File:", file.name)
-                print("Extension:", extension)
-                print("-" * 40)
-
 def create_category_folders():
-
     categories = set(FILE_TYPES.values())
     categories.add("Others")
 
-    print("\nCreating category folders...")
-
     for category in categories:
+        folder_path = Path(SOURCE_FOLDER) / category
+        folder_path.mkdir(parents=True, exist_ok=True)
 
-        folder_path = os.path.join(SOURCE_FOLDER, category)
 
-        os.makedirs(folder_path, exist_ok=True)
+def move_files():
+    moved = 0
+    skipped = 0
 
-        print("Created/verified:", category)
+    print("\nStarting file organization...")
+    print("-" * 40)
+
+    with os.scandir(SOURCE_FOLDER) as files:
+        for file in files:
+
+            if not file.is_file():
+                continue
+
+            source_path = Path(file.path)
+
+            extension = source_path.suffix.lower()
+            category = FILE_TYPES.get(extension, "Others")
+
+            destination_folder = Path(SOURCE_FOLDER) / category
+            destination_path = destination_folder / source_path.name
+
+            # Avoid overwriting existing files
+            if destination_path.exists():
+                print(f"Skipped: {source_path.name} (already exists)")
+                skipped += 1
+                continue
+
+            shutil.move(str(source_path), str(destination_path))
+
+            print(f"Moved: {source_path.name} -> {category}")
+            moved += 1
+
+    print("\n" + "=" * 40)
+    print("FILE ORGANIZATION SUMMARY")
+    print("=" * 40)
+    print("Successfully moved:", moved)
+    print("Skipped:", skipped)
+    print("Total:", moved + skipped)
+    print("=" * 40)
+
 
 if __name__ == "__main__":
-    inspect_files()
     create_category_folders()
+    move_files()
