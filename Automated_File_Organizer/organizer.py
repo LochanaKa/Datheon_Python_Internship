@@ -70,43 +70,69 @@ def get_unique_path(destination_path):
         counter += 1
 
 
+
 def move_files():
+
     moved = 0
+    failed = 0
 
     print("\nStarting file organization...")
     print("-" * 40)
 
-    with os.scandir(SOURCE_FOLDER) as files:
-        for file in files:
+    try:
+        with os.scandir(SOURCE_FOLDER) as files:
 
-            if not file.is_file():
-                continue
+            for file in files:
 
-            source_path = Path(file.path)
+                if not file.is_file():
+                    continue
 
-            extension = source_path.suffix.lower()
-            category = FILE_TYPES.get(extension, "Others")
+                source_path = Path(file.path)
 
-            destination_folder = Path(SOURCE_FOLDER) / category
-            destination_path = destination_folder / source_path.name
+                extension = source_path.suffix.lower()
+                category = FILE_TYPES.get(extension, "Others")
 
-            destination_path = get_unique_path(destination_path)
+                destination_folder = Path(SOURCE_FOLDER) / category
+                destination_path = destination_folder / source_path.name
 
-            shutil.move(str(source_path), str(destination_path))
+                try:
+                    destination_path = get_unique_path(destination_path)
 
-            print(f"Moved: {source_path.name} -> {destination_path.name}")
-            moved += 1
+                    shutil.move(
+                        str(source_path),
+                        str(destination_path)
+                    )
 
-            shutil.move(str(source_path), str(destination_path))
+                    print(
+                        f"Moved: {source_path.name} -> "
+                        f"{destination_path.name}"
+                    )
 
-            print(f"Moved: {source_path.name} -> {category}")
-            moved += 1
+                    moved += 1
+
+                except PermissionError as error:
+                    print(f"Permission denied: {source_path.name}")
+                    print("Reason:", error)
+                    failed += 1
+
+                except OSError as error:
+                    print(f"Could not move: {source_path.name}")
+                    print("Reason:", error)
+                    failed += 1
+
+    except PermissionError as error:
+        print("Cannot access the source folder.")
+        print("Reason:", error)
+        return
 
     print("\n" + "=" * 40)
     print("FILE ORGANIZATION SUMMARY")
     print("=" * 40)
     print("Successfully moved:", moved)
+    print("Failed:", failed)
+    print("Total processed:", moved + failed)
     print("=" * 40)
+
 
 
 if __name__ == "__main__":
