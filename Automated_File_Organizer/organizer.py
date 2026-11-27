@@ -60,6 +60,21 @@ def inspect_files():
                 print("Extension:", extension)
                 print("-" * 40)
 
+def create_category_folders():
+
+    categories = set(FILE_TYPES.values())
+    categories.add("Others")
+
+    print("\nCreating category folders...")
+
+    for category in categories:
+
+        folder_path = os.path.join(SOURCE_FOLDER, category)
+
+        os.makedirs(folder_path, exist_ok=True)
+
+        print("Created/verified:", category)
 
 if __name__ == "__main__":
     inspect_files()
+    create_category_folders()
