@@ -49,9 +49,29 @@ def create_category_folders():
         folder_path.mkdir(parents=True, exist_ok=True)
 
 
+def get_unique_path(destination_path):
+
+    if not destination_path.exists():
+        return destination_path
+
+    folder = destination_path.parent
+    filename = destination_path.stem
+    extension = destination_path.suffix
+
+    counter = 1
+
+    while True:
+        new_filename = f"{filename}_{counter}{extension}"
+        new_path = folder / new_filename
+
+        if not new_path.exists():
+            return new_path
+
+        counter += 1
+
+
 def move_files():
     moved = 0
-    skipped = 0
 
     print("\nStarting file organization...")
     print("-" * 40)
@@ -70,11 +90,12 @@ def move_files():
             destination_folder = Path(SOURCE_FOLDER) / category
             destination_path = destination_folder / source_path.name
 
-            # Avoid overwriting existing files
-            if destination_path.exists():
-                print(f"Skipped: {source_path.name} (already exists)")
-                skipped += 1
-                continue
+            destination_path = get_unique_path(destination_path)
+
+            shutil.move(str(source_path), str(destination_path))
+
+            print(f"Moved: {source_path.name} -> {destination_path.name}")
+            moved += 1
 
             shutil.move(str(source_path), str(destination_path))
 
